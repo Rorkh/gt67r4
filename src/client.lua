@@ -1,5 +1,5 @@
 local class = require("middleclass")
-local client = class("gt67r4 Client")
+local client = {}
 
 local endpoints = require("discord.endpoints")
 local f = string.format
@@ -12,9 +12,14 @@ local PRECISION = 'millisecond'
 local USER_AGENT = string.format('DiscordBot (http://github.com/Rorkh/gt67r4, 1)')
 
 function client:initialize(json, backend, token)
+	local obj = {}
+
 	self.json = json
 	self.backend = backend
 	self.token = token
+
+	setmetatable(obj, {__index = client})
+	return obj
 end
 
 function client:request(callback, method, endpoint, payload, query)
@@ -514,5 +519,7 @@ function client:getCurrentApplicationInformation(callback)
 	local endpoint = endpoints.OAUTH2_APPLICATION_ME
 	self:request(callback, "GET", endpoint)
 end
+
+setmetatable(client, {__call = client.initialize})
 
 return client
