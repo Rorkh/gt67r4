@@ -25,4 +25,4 @@ There is no strict dependencies at all, for example for cuberite no extra depend
 See examples/ folder
 
 ## Documentation
-<a href="https://github.com/Rorkh/gt67r4/blob/main/DOCS.md">Clack</a>
+<a href="https://github.com/Rorkh/gt67r4/blob/master/DOCS.md">Clack</a>
