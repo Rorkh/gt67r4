@@ -1,8 +1,10 @@
 local client = {}
 
 local endpoints = require("discord.endpoints")
+
 local channel = require("discord.channel")
 local guild = require("discord.guild")
+local webhook = require("discord.webhook")
 
 local f, gsub, byte = string.format, string.gsub, string.byte
 local insert, concat = table.insert, table.concat
@@ -517,12 +519,12 @@ end
 
 function client:getWebhook(callback, webhook_id) 
 	local endpoint = f(endpoints.WEBHOOK, webhook_id)
-	self:request(callback, "GET", endpoint)
+	self:request(callback, "GET", endpoint, nil, nil, webhook)
 end
 
 function client:getWebhookWithToken(callback, webhook_id, webhook_token) 
 	local endpoint = f(endpoints.WEBHOOK_TOKEN, webhook_id, webhook_token)
-	self:request(callback, "GET", endpoint)
+	self:request(callback, "GET", endpoint, nil, nil, webhook)
 end
 
 function client:modifyWebhook(callback, webhook_id, payload) 

@@ -184,4 +184,8 @@ function guild:modifyUserVoiceState(callback, user_id, payload)
 	self.client:modifyUserVoiceState(callback, self.id, user_id, payload)
 end
 
+function guild:getWebhooks(callback)
+	self.client:getGuildWebhooks(callback, self.id)
+end
+
 return guild
