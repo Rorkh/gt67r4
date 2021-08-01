@@ -188,4 +188,8 @@ function guild:getWebhooks(callback)
 	self.client:getGuildWebhooks(callback, self.id)
 end
 
+function guild:leaveGuild(callback)
+	self.client:leaveGuild(callback, self.id)
+end
+
 return guild
