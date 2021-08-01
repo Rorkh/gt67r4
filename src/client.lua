@@ -1,8 +1,10 @@
-local class = require("middleclass")
 local client = {}
 
 local endpoints = require("discord.endpoints")
-local f = string.format
+local channel = require("discord.channel")
+
+local f, gsub, byte = string.format, string.gsub, string.byte
+local insert, concat = table.insert, table.concat
 
 local BASE_URL = "https://discordapp.com/api"
 
@@ -10,6 +12,14 @@ local JSON = 'application/json'
 local PRECISION = 'millisecond'
 
 local USER_AGENT = string.format('DiscordBot (http://github.com/Rorkh/gt67r4, 1)')
+
+local function tohex(char)
+	return f('%%%02X', byte(char))
+end
+
+local function urlencode(obj)
+	return (gsub(tostring(obj), '%W', tohex))
+end
 
 function client:initialize(json, backend, token)
 	local obj = {}
@@ -22,7 +32,7 @@ function client:initialize(json, backend, token)
 	return obj
 end
 
-function client:request(callback, method, endpoint, payload, query)
+function client:request(callback, method, endpoint, payload, query, class)
 	local url = BASE_URL .. endpoint
 	local headers = {
 		['User-Agent'] = USER_AGENT,
@@ -32,15 +42,8 @@ function client:request(callback, method, endpoint, payload, query)
 
 	if query and next(query) then
 		url = {url}
-
-		for k, v in pairs(query) do
-			table.insert(url, #url == 1 and '?' or '&')
-			table.insert(url, urlencode(k))
-			table.insert(url, '=')
-			table.insert(url, urlencode(v))
-		end
-
-		url = table.concat(url)
+		for k, v in pairs(query) do insert(url, (#url == 1 and '?' or '&') .. urlencode(k) .. '=' .. urlencode(v)) end
+		url = concat(url)
 	end
 	
 	if payload then
@@ -49,7 +52,13 @@ function client:request(callback, method, endpoint, payload, query)
 	end
 
 	local new_callback = function(body)
-		callback(self.json.decode(body))
+		local object = self.json.decode(body)
+		if class then
+			class.client = self 
+			setmetatable(object, {__index = class}) 
+		end
+
+		callback(object)
 	end
 
 	self.backend.request(method, url, headers, payload, new_callback)
@@ -62,7 +71,7 @@ end
 
 function client:getChannel(callback, channel_id)
 	local endpoint = f(endpoints.CHANNEL, channel_id)
-	self:request(callback, "GET", endpoint)
+	self:request(callback, "GET", endpoint, nil, nil, channel)
 end
 
 function client:modifyChannel(callback, channel_id, payload)
@@ -207,12 +216,12 @@ end
 
 function client:createGuild(callback, payload)
 	local endpoint = endpoints.GUILDS
-	self:request(callback, "POST", endpoint, payload)
+	self:request(callback, "POST", endpoint, payload, nil, guild)
 end
 
 function client:getGuild(callback, guild_id)
 	local endpoint = f(endpoints.GUILD, guild_id)
-	self:request(callback, "GET", endpoint)
+	self:request(callback, "GET", endpoint, nil, nil, guild)
 end
 
 function client:modifyGuild(callback, guild_id, payload)
@@ -377,6 +386,51 @@ end
 
 function client:modifyGuildEmbed(callback, guild_id, payload) 
 	local endpoint = f(endpoints.GUILD_EMBED, guild_id)
+	self:request(callback, "PATCH", endpoint, payload)
+end
+
+function client:getGuildWidgetSettings(callback, guild_id)
+	local endpoint = f(endpoints.GUILD_WIDGET, guild_id)
+	self:request(callback, "GET", endpoint)
+end
+
+function client:modifyGuildWidget(callback, guild_id, payload)
+	local endpoint = f(endpoints.GUILD_WIDGET, guild_id)
+	self:request(callback, "PATCH", endpoint, payload)
+end
+
+function client:getGuildWidget(callback, guild_id)
+	local endpoint = f(endpoints.GUILD_THING, guild_id, "widget.json")
+	self:request(callback, "GET" endpoint)
+end
+
+function client:getGuildVanityURL(callback, guild_id)
+	local endpoint = f(endpoints.GUILD_THING, guild_id, "vanity-url")
+	self:request(callback, "GET", endpoint)
+end
+
+function client:getGuildWidgetImage(callback, guild_id, query)
+	local endpoint = f(endpoints.GUILD_THING, guild_id, "widget.png")
+	self:request(callback, "GET", endpoint, nil, query)
+end
+
+function client:getGuildWelcomeScreen(callback, guild_id)
+	local endpoint = f(endpoints.GUILD_THING, guild_id, "welcome-screen")
+	self:request(callback, "GET", endpoint)
+end
+
+function client:modifyGuildWelcomeScreen(callback, guild_id, payload)
+	local endpoint = f(endpoints.GUILD_THING, guild_id, "welcome-screen")
+	self:request(callback, "PATCH", endpoint, payload)
+end
+
+function client:modifyOwnVoiceState(callback, guild_id, payload)
+	local endpoint = f(endpoints.GUILD_VOICE_STATE_ME, guild_id)
+	self:request(callback, "PATCH", endpoint, payload)
+end
+
+function client:modifyUserVoiceState(callback, guild_id, user_id, payload)
+	local endpoint = f(endpoints.GUILD_VOICE_STATE_USER, guild_id, user_id)
 	self:request(callback, "PATCH", endpoint, payload)
 end
 
