@@ -1,10 +1,9 @@
-_G.TURBO_SSL = true
+-- Enable if turbo backend is used
+-- _G.TURBO_SSL = true
 
 local gt67r4 = require("gt67r4")
 
 --gt67r4:SetBackend(require("backends.luasocket"))
-local client = gt67r4:Client("Bot ODU2OTIwMTAzNDk2MzE5MDE2.YNIDCQ.uj6BQzvBOLY9Hn2AMtxQh4O5JXQ")
+local client = gt67r4:Client("Bot <insert_your_token_here>")
 
-client:createMessage(function(body)
-	print(body)
-end, "857678675553681439", {content = "Hello world"})
+client:createMessage(function(body) end, "<channel_id>", {content = "Hello world"})
