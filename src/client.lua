@@ -404,7 +404,7 @@ end
 
 function client:getGuildWidget(callback, guild_id)
 	local endpoint = f(endpoints.GUILD_THING, guild_id, "widget.json")
-	self:request(callback, "GET" endpoint)
+	self:request(callback, "GET", endpoint)
 end
 
 function client:getGuildVanityURL(callback, guild_id)

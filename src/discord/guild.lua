@@ -61,7 +61,7 @@ function guild:modifyCurrentUsersNick(callback, payload)
 end
 
 function guild:addMemberRole(callback, user_id, role_id, payload)
-	self.client:addGuildMemberRole(callback self.id, user_id, role_id, payload)
+	self.client:addGuildMemberRole(callback, self.id, user_id, role_id, payload)
 end
 
 function guild:removeMemberRole(callback, user_id, role_id)
@@ -112,8 +112,8 @@ function guild:getPruneCount(callback, query)
 	self.client:getGuildPruneCount(callback, self.id, query)
 end
 
-function quild:beginPrune(callback, payload, query)
-	self.client:beginGuildPrune(callback, self.id payload, query)
+function guild:beginPrune(callback, payload, query)
+	self.client:beginGuildPrune(callback, self.id, payload, query)
 end
 
 function guild:getVoiceRegions(callback)
