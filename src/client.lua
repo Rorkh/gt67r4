@@ -1,10 +1,10 @@
 local client = {}
 
-local endpoints = require("discord.endpoints")
+local endpoints = require("gt67r4.discord.endpoints")
 
-local channel = require("discord.channel")
-local guild = require("discord.guild")
-local webhook = require("discord.webhook")
+local channel = require("gt67r4.discord.channel")
+local guild = require("gt67r4.discord.guild")
+local webhook = require("gt67r4.discord.webhook")
 
 local f, gsub, byte = string.format, string.gsub, string.byte
 local insert, concat = table.insert, table.concat
