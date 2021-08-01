@@ -2,6 +2,7 @@ local client = {}
 
 local endpoints = require("discord.endpoints")
 local channel = require("discord.channel")
+local guild = require("discord.guild")
 
 local f, gsub, byte = string.format, string.gsub, string.byte
 local insert, concat = table.insert, table.concat
